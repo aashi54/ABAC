@@ -1,0 +1,180 @@
+version: '3.8'
+
+services:
+  # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - auth-service
+      - user-service
+      - role-service
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - USER_SERVICE_URL=http://user-service:3002
+      - ROLE_SERVICE_URL=http://role-service:3003
+
+  # Auth Service
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - JWT_SECRET=your-secret-key-change-in-production
+      - DB_HOST=postgres-auth
+      - DB_NAME=auth_db
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+    depends_on:
+      - postgres-auth
+
+  # User Service
+  user-service:
+    build: ./user-service
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - DB_HOST=postgres-user
+      - DB_NAME=user_db
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+    depends_on:
+      - postgres-user
+
+  # Role Service
+  role-service:
+    build: ./role-service
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      - DB_HOST=postgres-role
+      - DB_NAME=role_db
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+    depends_on:
+      - postgres-role
+
+  # Permission Service
+  permission-service:
+    build: ./permission-service
+    ports:
+      - "3004:3004"
+    environment:
+      - PORT=3004
+      - DB_HOST=postgres-permission
+      - DB_NAME=permission_db
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+    depends_on:
+      - postgres-permission
+
+  # Access Control Service
+  access-service:
+    build: ./access-service
+    ports:
+      - "3005:3005"
+    environment:
+      - PORT=3005
+      - DB_HOST=postgres-access
+      - DB_NAME=access_db
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - ROLE_SERVICE_URL=http://role-service:3003
+      - PERMISSION_SERVICE_URL=http://permission-service:3004
+    depends_on:
+      - postgres-access
+      - role-service
+      - permission-service
+
+  # Policy Service
+  policy-service:
+    build: ./policy-service
+    ports:
+      - "3006:3006"
+    environment:
+      - PORT=3006
+      - DB_HOST=postgres-policy
+      - DB_NAME=policy_db
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+    depends_on:
+      - postgres-policy
+
+  # Databases
+  postgres-auth:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  postgres-user:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_user_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  postgres-role:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: role_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_role_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+
+  postgres-permission:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: permission_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_permission_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+
+  postgres-access:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: access_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_access_data:/var/lib/postgresql/data
+    ports:
+      - "5437:5432"
+
+  postgres-policy:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: policy_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_policy_data:/var/lib/postgresql/data
+    ports:
+      - "5436:5432"
+
+volumes:
+  postgres_auth_data:
+  postgres_user_data:
+  postgres_role_data:
+  postgres_permission_data:
+  postgres_access_data:
+  postgres_policy_data: 
