@@ -44,7 +44,7 @@ The system consists of 6 microservices:
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/aashi54/ABAC.git
+   git clone https://github.com/Asmita54/ABAC.git
    cd ABAC/microservices
    ```
 
@@ -159,22 +159,5 @@ chmod +x test-all-services.sh
 - **Logs**: Docker Compose logs for all services
 - **Database**: Direct access to PostgreSQL databases on ports 5432-5437
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 👨‍💻 Author
-
-**Asmita Patidar**
-- GitHub: [@aashi54](https://github.com/aashi54)
-- LinkedIn: [asmita-patidar](https://www.linkedin.com/in/asmita-patidar-56b461152/)
 
 ---
